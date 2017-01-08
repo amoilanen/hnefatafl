@@ -1,0 +1,54 @@
+.board {
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+  width: 44rem;
+}
+
+.row {
+  width: 44rem;
+}
+
+.cell {
+  display: inline-block;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  width: 4rem;
+  height: 4rem;
+  box-sizing: border-box;
+}
+
+.attacker,
+.defender,
+.king {
+  border-radius: 2rem;
+  box-shadow: 0rem 0.2rem 0 0 gray;
+  float: left;
+  height: 3.4rem;
+  margin-left: 0.3rem;
+  margin-top: 0.2rem;
+  width: 3.4rem;
+}
+
+.attacker {
+  background-color: black;
+}
+
+.defender {
+  background-color: white;
+}
+
+.row:nth-of-type(2n) .cell:nth-of-type(2n) {
+    background-color: #F4F0CB;
+}
+
+.row:nth-of-type(2n) .cell:nth-of-type(2n+1) {
+  background-color: #B3A580;
+}
+
+.row:nth-of-type(2n + 1) .cell:nth-of-type(2n) {
+  background-color: #B3A580;
+}
+
+.row:nth-of-type(2n + 1) .cell:nth-of-type(2n+1) {
+  background-color: #F4F0CB;
+}
