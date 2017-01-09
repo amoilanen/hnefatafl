@@ -17,28 +17,33 @@
   box-sizing: border-box;
 }
 
-.attacker,
-.defender,
-.king {
-  border-radius: 2rem;
-  box-shadow: 0rem 0.2rem 0 0 gray;
-  float: left;
-  height: 3.4rem;
-  margin-left: 0.3rem;
-  margin-top: 0.2rem;
-  width: 3.4rem;
+.escape-cell {
+  position: relative;
 }
 
-.attacker {
+/* in calculations below cell_width is 4rem (CSS rule above) */
+.escape-cell:after, .escape-cell:before {
   background-color: black;
+  content: "";
+  display: block;
+  height: 0.1rem;
+  left: -0.82rem; /* (width - cell_width) / 2 */
+  position: absolute;
+  top: 1.95rem; /* (cell_width - height) / 2 */
+  width: 5.64rem; /* ~Math.sqrt(2) * cell_width */
+  z-index: 1;
 }
 
-.defender {
-  background-color: white;
+.escape-cell:after {
+  transform: rotate(45deg);
+}
+
+.escape-cell:before {
+  transform: rotate(-45deg);
 }
 
 .row:nth-of-type(2n) .cell:nth-of-type(2n) {
-    background-color: #F4F0CB;
+  background-color: #F4F0CB;
 }
 
 .row:nth-of-type(2n) .cell:nth-of-type(2n+1) {
@@ -51,4 +56,44 @@
 
 .row:nth-of-type(2n + 1) .cell:nth-of-type(2n+1) {
   background-color: #F4F0CB;
+}
+
+.attacker,
+.defender,
+.king {
+  border-radius: 2rem;
+  box-shadow: 0rem 0.2rem 0 0 gray;
+  float: left;
+  height: 3.4rem;
+  margin-left: 0.3rem;
+  margin-top: 0.2rem;
+  width: 3.4rem;
+  position: absolute;
+  z-index: 2;
+}
+
+.attacker {
+  background-color: black;
+}
+
+.defender,
+.king {
+  background-color: white;
+}
+
+/* in calculations below piece_width is 3.4rem (CSS rule above) */
+.king:after, .king:before {
+  background-color: black;
+  content: "";
+  display: block;
+  height: 0.1rem;
+  left: 0.5rem; /* (piece_width - width) / 2 */
+  position: absolute;
+  top: 1.65rem; /* (piece_width - height) / 2 */
+  width: 2.4rem;
+  z-index: 1;
+}
+
+.king:before {
+  transform: rotate(90deg);
 }

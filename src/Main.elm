@@ -87,6 +87,14 @@ model : Model
 model =
   Model attackersInitially defendersInitially kingInitially
 
+--TODO: Extract constant: board size
+isEscapePosition : Position -> Bool
+isEscapePosition {row, column} =
+  let
+    isCorner = (row == 0 || row == 10) && (column == 0 || column == 10)
+    isCenter = (row == 5 && column == 5)
+  in isCorner || isCenter
+
 -- UPDATE
 type Msg
   = Change String
@@ -104,7 +112,6 @@ view model =
     div [class "row"] (map (\column -> cell model row column) (range 0 10))
   ) (range 0 10))
 
---TODO: Display escape cells and the central cell differently from other cells
 cell : Model -> Int -> Int -> Html Msg
 cell model row column =
   let
@@ -118,4 +125,9 @@ cell model row column =
         [div [class "king"] []]
       else
         []
-  in div [class "cell"] cellChildren
+    cellClass =
+      if isEscapePosition position then
+        "cell escape-cell"
+      else
+        "cell"
+  in div [class cellClass] cellChildren
