@@ -108,7 +108,15 @@ update msg model =
     Change newContent ->
       model
     PieceSelected position ->
-      { model | pieceSelected = Just position }
+      let
+        newPosition = case model.pieceSelected of
+          Just previousPosition ->
+            if position == previousPosition then
+              Nothing
+            else
+              Just position
+          Nothing -> Just position
+      in { model | pieceSelected = newPosition }
 
 -- VIEW
 view : Model -> Html Msg
