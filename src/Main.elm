@@ -1,5 +1,6 @@
 import Html exposing (Html, div, input, text)
 import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 import List exposing (range, map)
 
 --TODO: Possible to move pieces
@@ -32,6 +33,7 @@ type alias Model =
   { attackers : List Position
   , defenders : List Position
   , king : Position
+  , pieceSelected : Maybe Position
   }
 
 -- TODO: Re-factor repetition when generating data
@@ -85,9 +87,9 @@ kingInitially =
 
 model : Model
 model =
-  Model attackersInitially defendersInitially kingInitially
+  Model attackersInitially defendersInitially kingInitially Nothing
 
---TODO: Extract constant: board size
+--TODO: Extract constant: board size    
 isEscapePosition : Position -> Bool
 isEscapePosition {row, column} =
   let
@@ -98,12 +100,15 @@ isEscapePosition {row, column} =
 -- UPDATE
 type Msg
   = Change String
+  | PieceSelected Position
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
     Change newContent ->
       model
+    PieceSelected position ->
+      { model | pieceSelected = Just position }
 
 -- VIEW
 view : Model -> Html Msg
@@ -116,18 +121,28 @@ cell : Model -> Int -> Int -> Html Msg
 cell model row column =
   let
     position = Position row column
+    selectedClass = case model.pieceSelected of
+      Just selectedPosition ->
+        if selectedPosition == position then
+          "selected "
+        else
+          ""
+      Nothing ->
+        ""
+    escapeCellClass =
+      if isEscapePosition position then
+        "escape-cell " 
+      else
+        ""
+    cellClass = "cell " ++ escapeCellClass ++ selectedClass
+
     cellChildren =
       if List.member position model.attackers then
-        [div [class "attacker"] []]
+        [div [class "attacker", onClick (PieceSelected position)] []]
       else if List.member position model.defenders then
-        [div [class "defender"] []]
+        [div [class "defender", onClick (PieceSelected position)] []]
       else if position == model.king then
-        [div [class "king"] []]
+        [div [class "king", onClick (PieceSelected position)] []]
       else
         []
-    cellClass =
-      if isEscapePosition position then
-        "cell escape-cell"
-      else
-        "cell"
   in div [class cellClass] cellChildren

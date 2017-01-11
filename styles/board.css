@@ -70,6 +70,23 @@
   width: 3.4rem;
   position: absolute;
   z-index: 2;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.selected .attacker {
+  box-shadow: 0rem 0.2rem 0 0 #7F5417;
+}
+
+.selected .defender,
+.selected .king {
+  box-shadow: 0rem 0.2rem 0 0 black;
+}
+
+.selected .attacker,
+.selected .defender,
+.selected .king {
+  transform: translate3d(-0.2rem, -0.2rem, 0rem);
 }
 
 .attacker {
