@@ -2,6 +2,7 @@ import Html exposing (Html, div, input, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import List exposing (range, map)
+import Util exposing(updateList)
 
 --TODO: Possible to move pieces
 --TODO: Only moves horizontally or vertically are possible
@@ -125,26 +126,22 @@ update msg model =
       case model.pieceSelected of
         Just pieceSelected ->
           let
-            newAttackers = 
-              (map (\attacker -> 
-                if attacker == pieceSelected then
-                  position
-                else
-                  attacker
-              ) model.attackers)
-            newDefenders =
-              (map (\defender -> 
-                if defender == pieceSelected then
-                  position
-                else
-                  defender
-              ) model.defenders)
-            newKing =
+            attackers =
+              updateList
+                model.attackers
+                (\attacker -> attacker == pieceSelected)
+                position
+            defenders =
+              updateList
+                model.defenders
+                (\defender -> defender == pieceSelected)
+                position
+            king =
               if model.king == pieceSelected then
                 position
               else
                 model.king
-          in { model | attackers = newAttackers, defenders = newDefenders, king = newKing }
+          in Model attackers defenders king Nothing
         Nothing ->
           model
 
@@ -183,4 +180,9 @@ cell model row column =
         [div [class "king", onClick (PieceSelected position)] []]
       else
         []
-  in div [class cellClass, onClick (MovePieceTo position)] cellChildren
+    cellAttributes =
+      if List.isEmpty cellChildren then
+        [class cellClass, onClick (MovePieceTo position)]
+      else
+        [class cellClass]
+  in div cellAttributes cellChildren
