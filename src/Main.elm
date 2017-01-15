@@ -7,6 +7,7 @@ import Util exposing(updateList)
 --TODO: Possible to move pieces
 --TODO: Only moves horizontally or vertically are possible
 --TODO: Add first unit tests for some of the functions that encode the logic of the game
+--TODO: Highlight valid move cells on the board
 
 --TODO: Pieces cannot be moved out of the board
 --TODO: Pieces cannot be moved to cells where other pieces
@@ -123,27 +124,38 @@ update msg model =
           Nothing -> Just position
       in { model | pieceSelected = newPosition }
     MovePieceTo position ->
-      case model.pieceSelected of
-        Just pieceSelected ->
-          let
-            attackers =
-              updateList
-                model.attackers
-                (\attacker -> attacker == pieceSelected)
-                position
-            defenders =
-              updateList
-                model.defenders
-                (\defender -> defender == pieceSelected)
-                position
-            king =
-              if model.king == pieceSelected then
-                position
-              else
-                model.king
-          in Model attackers defenders king Nothing
-        Nothing ->
-          model
+      if isValidMove model position then
+        case model.pieceSelected of
+          Just pieceSelected ->
+            let
+              attackers =
+                updateList
+                  model.attackers
+                  (\attacker -> attacker == pieceSelected)
+                  position
+              defenders =
+                updateList
+                  model.defenders
+                  (\defender -> defender == pieceSelected)
+                  position
+              king =
+                if model.king == pieceSelected then
+                  position
+                else
+                  model.king
+            in Model attackers defenders king Nothing
+          Nothing ->
+            model
+      else
+        model
+
+isValidMove : Model -> Position -> Bool
+isValidMove model toPosition =
+  case model.pieceSelected of
+    Just pieceSelected ->
+      pieceSelected.row == toPosition.row || pieceSelected.column == toPosition.column
+    Nothing ->
+      False
 
 -- VIEW
 view : Model -> Html Msg
