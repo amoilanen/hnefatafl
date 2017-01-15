@@ -6,12 +6,15 @@ import List exposing (range, map)
 --TODO: Possible to move pieces
 --TODO: Only moves horizontally or vertically are possible
 --TODO: Add first unit tests for some of the functions that encode the logic of the game
+
 --TODO: Pieces cannot be moved out of the board
 --TODO: Pieces cannot be moved to cells where other pieces
 --TODO: Pieces cannot be moved through other pieces
 --TODO: Pieces cannot be moved to escape cells except for the king piece
+
 --TODO: If other piece is between two pieces of other type it can be taken
 --TODO: ... Other rules
+
 --TODO: Winning condition checking
 --TOOD: Resetting the game
 --TODO: Re-factor: extract modules
@@ -101,6 +104,7 @@ isEscapePosition {row, column} =
 type Msg
   = Change String
   | PieceSelected Position
+  | MovePieceTo Position
 
 update : Msg -> Model -> Model
 update msg model =
@@ -117,6 +121,32 @@ update msg model =
               Just position
           Nothing -> Just position
       in { model | pieceSelected = newPosition }
+    MovePieceTo position ->
+      case model.pieceSelected of
+        Just pieceSelected ->
+          let
+            newAttackers = 
+              (map (\attacker -> 
+                if attacker == pieceSelected then
+                  position
+                else
+                  attacker
+              ) model.attackers)
+            newDefenders =
+              (map (\defender -> 
+                if defender == pieceSelected then
+                  position
+                else
+                  defender
+              ) model.defenders)
+            newKing =
+              if model.king == pieceSelected then
+                position
+              else
+                model.king
+          in { model | attackers = newAttackers, defenders = newDefenders, king = newKing }
+        Nothing ->
+          model
 
 -- VIEW
 view : Model -> Html Msg
@@ -153,4 +183,4 @@ cell model row column =
         [div [class "king", onClick (PieceSelected position)] []]
       else
         []
-  in div [class cellClass] cellChildren
+  in div [class cellClass, onClick (MovePieceTo position)] cellChildren
