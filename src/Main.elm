@@ -14,13 +14,16 @@ import Util exposing(updateList)
 --TODO: Pieces cannot be moved through other pieces
 --TODO: Pieces cannot be moved to escape cells except for the king piece
 
+--TODO: Pieces are moved only in turns (first player, then second player)
 --TODO: If other piece is between two pieces of other type it can be taken
+--TODO: When first player moves between two pieces of the opposite player, first player piece cannot be taken
 --TODO: ... Other rules
 
---TODO: Winning condition checking
+--TODO: Winning condition checking: king escapes to the escape cells, or king is taken, or moves are repeating 3 times
 --TOOD: Resetting the game
 --TODO: Re-factor: extract modules
 --TODO: Computer player
+--TODO: Choosing the side and the first move
 main =
   Html.beginnerProgram
     { model = model
@@ -176,14 +179,15 @@ cell model row column =
           ""
       Nothing ->
         ""
+    isPotentialMoveDestination = isValidMove model position
     escapeCellClass =
       if isEscapePosition position then
-        "escape-cell " 
+        "escape-cell "
       else
         ""
     cellClass = "cell " ++ escapeCellClass ++ selectedClass
 
-    cellChildren =
+    pieceChildren =
       if List.member position model.attackers then
         [div [class "attacker", onClick (PieceSelected position)] []]
       else if List.member position model.defenders then
@@ -192,8 +196,14 @@ cell model row column =
         [div [class "king", onClick (PieceSelected position)] []]
       else
         []
+    moveTargetChildren =
+      if isPotentialMoveDestination then
+        [div [class "potential-move-destination"] []]
+      else
+        []
+    cellChildren = pieceChildren ++ moveTargetChildren
     cellAttributes =
-      if List.isEmpty cellChildren then
+      if List.isEmpty pieceChildren then
         [class cellClass, onClick (MovePieceTo position)]
       else
         [class cellClass]

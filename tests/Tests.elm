@@ -5,6 +5,6 @@ import UtilTests
 
 all : Test
 all =
-    describe "All"
-        [ UtilTests.all
-        ]
+  describe "All"
+    [ UtilTests.all
+    ]

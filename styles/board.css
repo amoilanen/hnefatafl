@@ -15,6 +15,7 @@
   width: 4rem;
   height: 4rem;
   box-sizing: border-box;
+  position: relative;
 }
 
 .escape-cell {
@@ -86,7 +87,7 @@
 .selected .attacker,
 .selected .defender,
 .selected .king {
-  transform: translate3d(-0.2rem, -0.2rem, 0rem);
+  transform: translate3d(-0.1rem, -0.1rem, 0rem);
 }
 
 .attacker {
@@ -113,4 +114,14 @@
 
 .king:before {
   transform: rotate(90deg);
+}
+
+.potential-move-destination {
+  width: 0.2rem;
+  height: 0.2rem;
+  border-radius: 0.2rem;
+  position: absolute;
+  left: 1.9rem; /* (cell_width - content_width) /2 */
+  top: 1.9rem; /* (cell_height - content_height) /2 */
+  background-color: black;
 }
