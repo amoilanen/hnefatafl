@@ -4,6 +4,9 @@ import Html.Events exposing (onClick)
 import List exposing (range, map)
 import Util exposing(updateList)
 
+import Game exposing(Position, GameState, isValidMove)
+
+
 --TODO: Possible to move pieces
 --TODO: Only moves horizontally or vertically are possible
 --TODO: Add first unit tests for some of the functions that encode the logic of the game
@@ -32,17 +35,6 @@ main =
     }
 
 -- MODEL
-type alias Position =
-  { row : Int
-  , column : Int
-  }
-
-type alias Model =
-  { attackers : List Position
-  , defenders : List Position
-  , king : Position
-  , pieceSelected : Maybe Position
-  }
 
 -- TODO: Re-factor repetition when generating data
 attackersInitially : List Position
@@ -93,9 +85,9 @@ kingInitially : Position
 kingInitially =
   Position 5 5
 
-model : Model
+model : GameState
 model =
-  Model attackersInitially defendersInitially kingInitially Nothing
+  GameState attackersInitially defendersInitially kingInitially Nothing
 
 --TODO: Extract constant: board size    
 isEscapePosition : Position -> Bool
@@ -111,7 +103,7 @@ type Msg
   | PieceSelected Position
   | MovePieceTo Position
 
-update : Msg -> Model -> Model
+update : Msg -> GameState -> GameState
 update msg model =
   case msg of
     Change newContent ->
@@ -146,28 +138,20 @@ update msg model =
                   position
                 else
                   model.king
-            in Model attackers defenders king Nothing
+            in GameState attackers defenders king Nothing
           Nothing ->
             model
       else
         model
 
-isValidMove : Model -> Position -> Bool
-isValidMove model toPosition =
-  case model.pieceSelected of
-    Just pieceSelected ->
-      pieceSelected.row == toPosition.row || pieceSelected.column == toPosition.column
-    Nothing ->
-      False
-
 -- VIEW
-view : Model -> Html Msg
+view : GameState -> Html Msg
 view model =
   div [class "board"] (map (\row ->
     div [class "row"] (map (\column -> cell model row column) (range 0 10))
   ) (range 0 10))
 
-cell : Model -> Int -> Int -> Html Msg
+cell : GameState -> Int -> Int -> Html Msg
 cell model row column =
   let
     position = Position row column

@@ -1,4 +1,4 @@
-module UtilTests exposing (..)
+module UtilTests exposing (all)
 
 import Test exposing (..)
 import Expect exposing (equal)
