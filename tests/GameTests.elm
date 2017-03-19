@@ -18,13 +18,13 @@ isFalse =
 --_ _ d _ _
 --a d k d a
 --_ _ d _ _
---x _ a _ x
+--x a _ _ x
 
 attackers : List Position
 attackers =
   [ (Position 0 2)
   , (Position 2 0)
-  , (Position 2 4)
+  , (Position 1 4)
   , (Position 4 2)
   ]
 
@@ -65,5 +65,11 @@ all =
       , test "cannot move outside of the board" <|
         \() ->
           isFalse (isValidMove state (Position 0 6))
+      , test "cannot move to a position where another piece is" <|
+        \() ->
+          let
+            updatedState = { state | pieceSelected = Just (Position 1 4) }
+          in
+            isFalse (isValidMove updatedState (Position 1 2))
       ]
     ]
