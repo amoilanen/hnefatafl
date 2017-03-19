@@ -6,12 +6,6 @@ import Util exposing(updateList)
 
 import Game exposing(Position, GameState, isValidMove)
 
-
---TODO: Possible to move pieces
---TODO: Only moves horizontally or vertically are possible
---TODO: Add first unit tests for some of the functions that encode the logic of the game
---TODO: Highlight valid move cells on the board
-
 --TODO: Pieces cannot be moved out of the board
 --TODO: Pieces cannot be moved to cells where other pieces
 --TODO: Pieces cannot be moved through other pieces
@@ -35,6 +29,9 @@ main =
     }
 
 -- MODEL
+
+boardSize : Int
+boardSize = 10
 
 -- TODO: Re-factor repetition when generating data
 attackersInitially : List Position
@@ -87,14 +84,13 @@ kingInitially =
 
 model : GameState
 model =
-  GameState attackersInitially defendersInitially kingInitially Nothing
+  GameState attackersInitially defendersInitially kingInitially Nothing boardSize
 
---TODO: Extract constant: board size    
 isEscapePosition : Position -> Bool
 isEscapePosition {row, column} =
   let
-    isCorner = (row == 0 || row == 10) && (column == 0 || column == 10)
-    isCenter = (row == 5 && column == 5)
+    isCorner = (row == 0 || row == boardSize) && (column == 0 || column == boardSize)
+    isCenter = (row == (boardSize // 2) && column == (boardSize // 2))
   in isCorner || isCenter
 
 -- UPDATE
@@ -138,7 +134,7 @@ update msg model =
                   position
                 else
                   model.king
-            in GameState attackers defenders king Nothing
+            in GameState attackers defenders king Nothing model.boardSize
           Nothing ->
             model
       else
@@ -148,8 +144,8 @@ update msg model =
 view : GameState -> Html Msg
 view model =
   div [class "board"] (map (\row ->
-    div [class "row"] (map (\column -> cell model row column) (range 0 10))
-  ) (range 0 10))
+    div [class "row"] (map (\column -> cell model row column) (range 0 boardSize))
+  ) (range 0 boardSize))
 
 cell : GameState -> Int -> Int -> Html Msg
 cell model row column =

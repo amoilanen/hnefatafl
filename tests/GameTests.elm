@@ -45,9 +45,12 @@ selectedPiece : Maybe Position
 selectedPiece =
   Just (Position 0 2)
 
+boardSize : Int
+boardSize = 5
+
 state : GameState
 state =
-  GameState attackers defenders king selectedPiece
+  GameState attackers defenders king selectedPiece boardSize
 
 all : Test
 all =
@@ -59,5 +62,8 @@ all =
       , test "cannot move to empty cell in different column and row" <|
         \() ->
           isFalse (isValidMove state (Position 1 1))
+      , test "cannot move outside of the board" <|
+        \() ->
+          isFalse (isValidMove state (Position 0 6))
       ]
     ]
