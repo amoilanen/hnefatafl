@@ -71,5 +71,11 @@ all =
             updatedState = { state | pieceSelected = Just (Position 1 4) }
           in
             isFalse (isValidMove updatedState (Position 1 2))
+      , test "cannot move through another piece to a free place" <|
+        \() ->
+          let
+            updatedState = { state | pieceSelected = Just (Position 1 4) }
+          in
+            isFalse (isValidMove updatedState (Position 1 0))
       ]
     ]

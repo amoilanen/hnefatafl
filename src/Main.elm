@@ -6,9 +6,9 @@ import Util exposing(updateList)
 
 import Game exposing(Position, GameState, isValidMove)
 
---TODO: Pieces cannot be moved out of the board
---TODO: Pieces cannot be moved to cells where other pieces
---TODO: Pieces cannot be moved through other pieces
+--TODO: Pieces cannot be moved out of the board - OK
+--TODO: Pieces cannot be moved to cells where other pieces - OK
+--TODO: Pieces cannot be moved through other pieces - OK
 --TODO: Pieces cannot be moved to escape cells except for the king piece
 
 --TODO: Pieces are moved only in turns (first player, then second player)
