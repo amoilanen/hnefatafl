@@ -9,6 +9,7 @@ import Game exposing(Position, GameState, isValidMove)
 --TODO: Pieces cannot be moved out of the board - OK
 --TODO: Pieces cannot be moved to cells where other pieces - OK
 --TODO: Pieces cannot be moved through other pieces - OK
+
 --TODO: Pieces cannot be moved to escape cells except for the king piece
 
 --TODO: Pieces are moved only in turns (first player, then second player)
@@ -17,10 +18,14 @@ import Game exposing(Position, GameState, isValidMove)
 --TODO: ... Other rules
 
 --TODO: Winning condition checking: king escapes to the escape cells, or king is taken, or moves are repeating 3 times
---TOOD: Resetting the game
 --TODO: Re-factor: extract modules
---TODO: Computer player
+
+--TODO: Game controls
+--TODO: Resetting the game
+--TODO: Computer player (implement simple AI)
 --TODO: Choosing the side and the first move
+--TODO: Choosing color
+
 main =
   Html.beginnerProgram
     { model = model
@@ -95,15 +100,12 @@ isEscapePosition {row, column} =
 
 -- UPDATE
 type Msg
-  = Change String
-  | PieceSelected Position
+  = PieceSelected Position
   | MovePieceTo Position
 
 update : Msg -> GameState -> GameState
 update msg model =
   case msg of
-    Change newContent ->
-      model
     PieceSelected position ->
       let
         newPosition = case model.pieceSelected of

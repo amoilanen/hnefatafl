@@ -15,31 +15,45 @@ type alias GameState =
   , boardSize : Int
   }
 
---TODO: Extract the function for checking if the piece is in the way, simplify range checking
+isOnBoard : Position -> Int -> Bool
+isOnBoard position boardSize =
+  position.row >= 0 && position.row <= boardSize
+    && position.column >= 0 && position.column <= boardSize
+
+allPieces : GameState -> List Position
+allPieces model = 
+  model.attackers ++ model.defenders ++ [model.king]
+
+areInSameRowOrColumn : Position -> Position -> Bool
+areInSameRowOrColumn x y =
+  x.row == y.row || x.column == y.column
+
+isAnotherPieceInTheWay : Position -> Position -> List Position -> Bool
+isAnotherPieceInTheWay piece toPosition otherPieces =
+  let
+    moveRangeRow = List.range
+      (min toPosition.row piece.row)
+      (max toPosition.row piece.row)
+    moveRangeColumn = List.range
+      (min toPosition.column piece.column)
+      (max toPosition.column piece.column)
+    piecesInMoveRange = List.foldl
+      (\piece acc ->
+        if List.member piece.row moveRangeRow && List.member piece.column moveRangeColumn then
+          acc + 1
+        else
+          acc
+      )
+      0 otherPieces
+  in
+    (piecesInMoveRange > 1)
+
 isValidMove : GameState -> Position -> Bool
 isValidMove model toPosition =
   case model.pieceSelected of
     Just pieceSelected ->
-      let
-        inSameRowOrColumn = pieceSelected.row == toPosition.row || pieceSelected.column == toPosition.column
-        stillOnBoard = toPosition.row >= 0 && toPosition.row <= model.boardSize
-          && toPosition.column >= 0 && toPosition.column <= model.boardSize
-        allPieces = model.attackers ++ model.defenders ++ [model.king]
-        moveRangeRow = List.range
-          (min toPosition.row pieceSelected.row)
-          (max toPosition.row pieceSelected.row)
-        moveRangeColumn = List.range
-          (min toPosition.column pieceSelected.column)
-          (max toPosition.column pieceSelected.column)
-        piecesInMoveRange = List.foldl
-          (\piece acc ->
-            if List.member piece.row moveRangeRow && List.member piece.column moveRangeColumn then
-              acc + 1
-            else
-              acc
-          )
-          0 allPieces
-        isAnotherPieceInTheWay = piecesInMoveRange > 1
-      in inSameRowOrColumn && stillOnBoard && not isAnotherPieceInTheWay
+      (areInSameRowOrColumn pieceSelected toPosition) &&
+      (isOnBoard toPosition model.boardSize) &&
+      not (isAnotherPieceInTheWay pieceSelected toPosition (allPieces model))
     Nothing ->
       False
