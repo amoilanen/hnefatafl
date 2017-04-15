@@ -1,6 +1,7 @@
 module Game exposing(Position, GameState, isValidMove)
 
 import List exposing (any)
+import Util exposing(makeRange, belongsToRange)
 
 type alias Position =
   { row : Int
@@ -31,15 +32,11 @@ areInSameRowOrColumn x y =
 isAnotherPieceInTheWay : Position -> Position -> List Position -> Bool
 isAnotherPieceInTheWay piece toPosition otherPieces =
   let
-    moveRangeRow = List.range
-      (min toPosition.row piece.row)
-      (max toPosition.row piece.row)
-    moveRangeColumn = List.range
-      (min toPosition.column piece.column)
-      (max toPosition.column piece.column)
+    rowMoveRange = makeRange toPosition.row piece.row
+    columnMoveRange = makeRange toPosition.column piece.column
     piecesInMoveRange = List.foldl
       (\piece acc ->
-        if List.member piece.row moveRangeRow && List.member piece.column moveRangeColumn then
+        if belongsToRange piece.row rowMoveRange && belongsToRange piece.column columnMoveRange then
           acc + 1
         else
           acc
