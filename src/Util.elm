@@ -1,4 +1,4 @@
-module Util exposing(updateList, makeRange, belongsToRange)
+module Util exposing(updateList, makeRange, belongsToRange  )
 
 import List exposing (map)
 

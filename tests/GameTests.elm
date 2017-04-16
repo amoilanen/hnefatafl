@@ -41,8 +41,8 @@ king =
   Position 2 2
 
 -- Leftmost attacker piece is selected
-selectedPiece : Maybe Position
-selectedPiece =
+pieceSelected : Maybe Position
+pieceSelected =
   Just (Position 0 2)
 
 boardSize : Int
@@ -50,7 +50,7 @@ boardSize = 5
 
 state : GameState
 state =
-  GameState attackers defenders king selectedPiece boardSize
+  GameState attackers defenders king pieceSelected boardSize
 
 all : Test
 all =
@@ -77,5 +77,17 @@ all =
             updatedState = { state | pieceSelected = Just (Position 1 4) }
           in
             isFalse (isValidMove updatedState (Position 1 0))
+      , test "cannot move attacker/defender piece to escape position" <|
+        \() ->
+          let
+            attackerSelectedState = { state | pieceSelected = Just (Position 1 4) }
+          in
+            isFalse (isValidMove attackerSelectedState (Position 0 4))
+      , test "can move king piece to escape position" <|
+        \() ->
+          let
+            kingSelectedState = { state | pieceSelected = Just (Position 0 3), king = (Position 0 3)}
+          in
+            isTrue (isValidMove kingSelectedState (Position 0 4))
       ]
     ]

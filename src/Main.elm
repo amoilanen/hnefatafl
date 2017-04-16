@@ -4,7 +4,7 @@ import Html.Events exposing (onClick)
 import List exposing (range, map)
 import Util exposing(updateList)
 
-import Game exposing(Position, GameState, isValidMove)
+import Game exposing(Position, GameState, isValidMove, isEscapePosition)
 
 --TODO: Pieces cannot be moved out of the board - OK
 --TODO: Pieces cannot be moved to cells where other pieces - OK
@@ -34,9 +34,6 @@ main =
     }
 
 -- MODEL
-
-boardSize : Int
-boardSize = 10
 
 -- TODO: Re-factor repetition when generating data
 attackersInitially : List Position
@@ -87,16 +84,12 @@ kingInitially : Position
 kingInitially =
   Position 5 5
 
+boardSize : Int
+boardSize = 11
+
 model : GameState
 model =
   GameState attackersInitially defendersInitially kingInitially Nothing boardSize
-
-isEscapePosition : Position -> Bool
-isEscapePosition {row, column} =
-  let
-    isCorner = (row == 0 || row == boardSize) && (column == 0 || column == boardSize)
-    isCenter = (row == (boardSize // 2) && column == (boardSize // 2))
-  in isCorner || isCenter
 
 -- UPDATE
 type Msg
@@ -146,8 +139,8 @@ update msg model =
 view : GameState -> Html Msg
 view model =
   div [class "board"] (map (\row ->
-    div [class "row"] (map (\column -> cell model row column) (range 0 boardSize))
-  ) (range 0 boardSize))
+    div [class "row"] (map (\column -> cell model row column) (range 0 (model.boardSize - 1) ))
+  ) (range 0 (model.boardSize - 1) ))
 
 cell : GameState -> Int -> Int -> Html Msg
 cell model row column =
@@ -163,7 +156,7 @@ cell model row column =
         ""
     isPotentialMoveDestination = isValidMove model position
     escapeCellClass =
-      if isEscapePosition position then
+      if isEscapePosition position model.boardSize then
         "escape-cell "
       else
         ""

@@ -1,4 +1,4 @@
-module Game exposing(Position, GameState, isValidMove)
+module Game exposing(Position, GameState, isValidMove, isEscapePosition)
 
 import List exposing (any)
 import Util exposing(makeRange, belongsToRange)
@@ -20,6 +20,13 @@ isOnBoard : Position -> Int -> Bool
 isOnBoard position boardSize =
   position.row >= 0 && position.row <= boardSize
     && position.column >= 0 && position.column <= boardSize
+
+isEscapePosition : Position -> Int -> Bool
+isEscapePosition {row, column} boardSize =
+  let
+    isCorner = (row == 0 || row == boardSize - 1) && (column == 0 || column == boardSize - 1)
+    isCenter = (row == (boardSize // 2) && column == (boardSize // 2))
+  in isCorner || isCenter
 
 allPieces : GameState -> List Position
 allPieces model = 
@@ -45,12 +52,17 @@ isAnotherPieceInTheWay piece toPosition otherPieces =
   in
     (piecesInMoveRange > 1)
 
+isOrdinaryPieceMovingToEscapePosition : Position -> Position -> GameState -> Bool
+isOrdinaryPieceMovingToEscapePosition piece toPosition model =
+  (isEscapePosition toPosition model.boardSize) && not (piece == model.king)
+
 isValidMove : GameState -> Position -> Bool
 isValidMove model toPosition =
   case model.pieceSelected of
     Just pieceSelected ->
       (areInSameRowOrColumn pieceSelected toPosition) &&
       (isOnBoard toPosition model.boardSize) &&
-      not (isAnotherPieceInTheWay pieceSelected toPosition (allPieces model))
+      not (isAnotherPieceInTheWay pieceSelected toPosition (allPieces model)) &&
+      not (isOrdinaryPieceMovingToEscapePosition pieceSelected toPosition model)
     Nothing ->
       False
